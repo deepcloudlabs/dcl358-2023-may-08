@@ -4,11 +4,10 @@ import java.net.URI;
 
 import javax.annotation.PostConstruct;
 
-import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.socket.WebSocketMessage;
 import org.springframework.web.reactive.socket.client.WebSocketClient;
 
-@Service
+//@Service
 public class ReactiveBinanceWSClient {
 	private static final String BINANCE_WS_API = 
 			"wss://stream.binance.com:9443/ws/btcusdt@trade";

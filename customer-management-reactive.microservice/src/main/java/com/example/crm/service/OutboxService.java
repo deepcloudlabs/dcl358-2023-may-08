@@ -13,12 +13,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class OutboxService {
-	private final KafkaMessagingService kafkaMessagingService;
+	private final MessagingService messagingService;
 	private final ReactiveEventOutboxRepository reactiveEventOutboxRepository;
 	private final ObjectMapper objectMapper;
 
-	public OutboxService(KafkaMessagingService kafkaMessagingService, ObjectMapper objectMapper, ReactiveEventOutboxRepository reactiveEventOutboxRepository) {
-		this.kafkaMessagingService = kafkaMessagingService;
+	public OutboxService(MessagingService messagingService, ObjectMapper objectMapper, ReactiveEventOutboxRepository reactiveEventOutboxRepository) {
+		this.messagingService = messagingService;
 		this.reactiveEventOutboxRepository = reactiveEventOutboxRepository;
 		this.objectMapper = objectMapper;
 	}
@@ -38,7 +38,7 @@ public class OutboxService {
 	@Scheduled(fixedRate = 10_000)
 	public void sendMessagesInOutbox() {
 		reactiveEventOutboxRepository.find(PageRequest.of(0, 10))
-		                             .doOnNext(kafkaMessagingService::sendMessage)
+		                             .doOnNext(messagingService::sendMessage)
 		                             .doOnNext(eventDocument->reactiveEventOutboxRepository.delete(eventDocument).subscribe())
 		                             .subscribe(System.err::println);
 	}
